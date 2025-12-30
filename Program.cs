@@ -19,16 +19,23 @@ class Program
             return;
         }
 
-        // Chemin du dossier "Carlo"
-        string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Carlo");
+        string baseFolder = AppDomain.CurrentDomain.BaseDirectory;
+        string folderPath = Path.Combine(baseFolder, topicName);
 
         if (!Directory.Exists(folderPath))
         {
-            Console.WriteLine($"Le dossier '{folderPath}' est introuvable.");
-            return;
+            var match = Array.Find(Directory.GetDirectories(baseFolder), d =>
+                string.Equals(new DirectoryInfo(d).Name, topicName, StringComparison.OrdinalIgnoreCase));
+
+            if (match is null)
+            {
+                Console.WriteLine($"Aucun dossier correspondant au topic '{topicName}' n'a été trouvé (recherche insensible à la casse).");
+                return;
+            }
+
+            folderPath = match;
         }
 
-        // Parcourir tous les fichiers dans le dossier
         string[] files = Directory.GetFiles(folderPath);
         if (files.Length == 0)
         {
