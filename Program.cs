@@ -73,22 +73,7 @@ class Program
         await using var client = new ServiceBusClient(ConnectionString);
         ServiceBusSender sender = client.CreateSender(topicName);
 
-        // Ton shipment brut
-        var shipmentPayload = System.Text.Json.JsonSerializer.Deserialize<object>(content);
-
-        var envelope = new
-        {
-            EventId = Guid.NewGuid().ToString(),
-            EventType = title.Replace(".json", ""),  // ou une valeur fixe
-            CompanyCode = "ALJIB",
-            ShipmentMainRef = "ALJIB/22/25081744",
-
-            Shipment = shipmentPayload
-        };
-
-        string body = System.Text.Json.JsonSerializer.Serialize(envelope);
-
-        var message = new ServiceBusMessage(body)
+        var message = new ServiceBusMessage(content)
         {
             ContentType = "application/json",
             Subject = title
